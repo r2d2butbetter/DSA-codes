@@ -17,15 +17,25 @@ int createlist()
     scanf("%d", &x);
     for (int i = 0; i < x; i++)
     {
-        node* nn=(node*)malloc(sizeof(node));
+        node* nn = (node*)malloc(sizeof(node));
         int ele;
-        printf("Enter data for element %d", i);
+        printf("Enter data for element %d: ", i+1);
         scanf("%d", &ele);
-        if (head==NULL)
+        nn->data = ele;
+        nn->next = NULL;
+        if (head == NULL)
         {
-            head->data=ele;
+            head = nn;
         }
-        
+        else
+        {
+            node* temp = head;
+            while (temp->next != NULL)
+            {
+                temp = temp->next;
+            }
+            temp->next = nn;
+        }
     }
 }
 
@@ -41,17 +51,24 @@ void insertatbeg(node* head)
     head=nn;   //change head pointer to the new start of list
 }
 
-void insertatend(node* head)
+void insertatend(node** head)
 {
     int x;
-    printf("Insert val to put at begenning");
+    printf("Insert val to put at end");
     scanf("%d", &x);
 
     node *nn=(node*)malloc(sizeof(node));
     nn->data=x;
     nn->next=NULL;
 
-    node* temp=head; //not necessary but better
+    if (*head=NULL)//if the list is empty
+    {
+        *head=nn;
+        return;
+    }
+    
+
+    node* temp=*head; //not necessary but better
     while (temp->next !=NULL)//go to the last node
     {
         temp=temp->next;
@@ -59,7 +76,7 @@ void insertatend(node* head)
     temp->next=nn;
 }
 
-void insertatpos(node* head)
+void insertatpos(node** head)
 {
     int x, pos, i = 1;
     printf("Enter The Value To Be Inserted \n");
@@ -68,8 +85,15 @@ void insertatpos(node* head)
     scanf("%d", &pos);
 
     node* nn=(node*)malloc(sizeof(node));
-    node* temp=head;
+    node* temp=*head;
     nn->data=x;
+
+    if (pos==1)
+    {
+        nn->next=*head;
+        *head=nn;
+        return;
+    }
 
     while (i<pos-1)//goto the node just before pos
     {
@@ -77,6 +101,168 @@ void insertatpos(node* head)
     }
     nn->next=temp->next;
     temp->next=nn;
+}
+
+void insertbefore(node* head)
+{
+    int c, d;
+    node* nn = (node*)malloc(sizeof(node));
+    printf("Enter The Value To Be Inserted \n");
+    scanf("%d", &c);
+    printf("Enter the val before which to insert:\n");
+    scanf("%d", &d);
+
+    nn->data=c;
+    nn->next=NULL;
+
+    if (head->data==d)//if head itself if the node before which to insert
+    {
+        nn->next=head;
+        head=nn;
+        return;
+    }
+    
+
+    node* temp=head;
+    while (temp->next->data!=d && temp->next!=NULL)//matching with the data of node to insert before
+    {
+        temp=temp->next;
+    }
+    nn->next=temp->next;
+    temp->next=nn;
+}
+
+void insertafter(node* head)
+{
+    int c, d;
+    node* nn = (node*)malloc(sizeof(node));
+    printf("Enter The Value To Be Inserted \n");
+    scanf("%d", &c);
+    printf("Enter the val after which to insert:\n");
+    scanf("%d", &d);
+
+    nn->data=c;
+    nn->next=NULL;
+
+    node* temp=head;
+
+    while (temp->data!=d)//go to the node after which to insert
+    {
+        temp=temp->next;
+    }
+
+    nn->next=temp->next;
+    temp->next=nn;
+}
+
+//deletion functions:
+void delatbeg(node** head)
+{
+    if (*head==NULL)
+    {
+        printf("List already empty\n");
+        return;
+    }
+
+    node* temp=*head;
+    *head=(*head)->next;
+    free(temp);
+}
+
+void deleteatend(node** head)
+{
+    if (*head==NULL)
+    {
+        printf("List is already empty\n");
+        return;
+    }
+    
+    node* temp=*head;
+
+    if (temp->next=NULL)
+    {
+        free(temp);
+        temp=NULL;
+        return;
+    }
+    node* del=NULL;
+    while (temp->next!=NULL)
+    {
+        del=temp;
+        temp=temp->next;
+    }
+    del->next=NULL;
+    free(temp);
+}
+
+void updateele(node *head)
+{
+    int new;
+    int ele;
+    printf("Enter the element which should be updated: ");
+    scanf("%d", &ele);
+    printf("Enter new value: ");
+    scanf("%d", &new);
+
+    node* temp=head;
+
+    while (temp->data!=ele && temp->next!=NULL)
+    {
+        temp=temp->next;
+    }
+    
+    if (temp->data==ele)
+    {
+        temp->data=new;
+    }
+    else
+    {
+        printf("Reached end of list but didn't find the value");
+    }
+}
+
+void updateatbeg(node* head)
+{
+    printf("Enter the new value for first node: ");
+    int new;
+    scanf("%d", &new);
+
+    head->data=new;
+}
+
+void updateatend(node* head)
+{
+    printf("Enter the new value for last node: ");
+    int new;
+    scanf("%d", &new);
+
+    node* temp=head;
+
+    while (temp->next!=NULL)
+    {
+        temp=temp->next;
+    }
+    temp->data=new;
+    
+}
+
+void display(node* head)
+{
+    node* temp=head;
+    if (head==NULL)
+    {
+        printf("List is empty!\n");
+    }
+    else
+    {
+        int count=0;
+        while (temp->next!=NULL)
+        {
+            printf("%d ", temp->data);
+            count++;
+        }
+        printf("Printed %d elements in the list\n", count);
+    }
 }
 
 int main()
@@ -111,5 +297,4 @@ int main()
                 printf("Invalid choice. Please try again.\n");
         }
     }
-
 }
